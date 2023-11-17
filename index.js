@@ -28,6 +28,7 @@ app.use(useragent.express());
 app.use(cors({ origin: ['https://apatecyprusestate.com', 'http://localhost:3000/'] }));
 app.use(express.json());
 
+app.options('*', cors())
 
 app.post('/register', async (req, res) => {
 	const userData = await db.collection('users').doc('admin').get();
