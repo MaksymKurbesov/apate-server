@@ -25,9 +25,9 @@ const mailTransport = nodemailer.createTransport({
 const app = express();
 
 app.use(useragent.express());
-app.use(cors({ origin: 'http:/apatecyprusestate-server.site/', credentials:true, optionSuccessStatus:200 }));
+app.use(cors({ origin: 'https://apatecyprusestate.com/', credentials:true, optionSuccessStatus:200 }));
 app.use(express.json());
- 
+
 app.post('/register', async (req, res) => {
 	const userData = await db.collection('users').doc('admin').get();
 	let userAgentInfo = req.useragent;
