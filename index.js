@@ -25,10 +25,9 @@ const mailTransport = nodemailer.createTransport({
 const app = express();
 
 app.use(useragent.express());
-app.use(cors({ origin: true }));
+app.use(cors({ origin: '*' }));
 app.use(express.json());
 
-app.options('*', cors()) // include before other routes
 
 app.post('/register', async (req, res) => {
 	const userData = await db.collection('users').doc('admin').get();
