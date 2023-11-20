@@ -30,6 +30,23 @@ app.use(express.json());
 
 app.options('*', cors())
 
+app.post("/sendEmail", async (req, res) => {
+	const { to, subject, html } = req.body;
+
+	try {
+		await mailTransport.sendMail({
+			from: `Support <${supportEmail}>`,
+			to,
+			subject,
+			html,
+		});
+		res.status(200).send("Email sent successfully");
+	} catch (error) {
+		console.error("Error sending email:", error);
+		res.status(500).send("Failed to send email");
+	}
+});
+
 app.post('/register', async (req, res) => {
 	const userData = await db.collection('users').doc('admin').get();
 	let userAgentInfo = req.useragent;
@@ -48,7 +65,6 @@ app.post('/register', async (req, res) => {
 		console.error("Error sending email:", error);
 		res.status(500).send("Failed to send email");
 	}
-
 });
 
 app.listen(3333, () => {
