@@ -5,6 +5,13 @@ import cors from 'cors';
 import { initializeApp } from 'firebase-admin/app';
 import { getFirestore } from "firebase-admin/firestore";
 
+import fs from 'fs';
+import https from 'https';
+
+const cert = fs.readFileSync('./path/to/the/cert.crt');
+const ca = fs.readFileSync('./path/to/the/ca.crt');
+const key = fs.readFileSync('./path/to/the/private.key');
+
 const firestoreApp = initializeApp();
 const db = getFirestore();
 
@@ -29,6 +36,11 @@ app.use(cors({ origin: ['https://apatecyprusestate.com', 'http://localhost:3000'
 app.use(express.json());
 
 app.options('*', cors())
+
+const httpsOptions = {
+	key: fs.readFileSync("./ssl/apate.key"), // путь к ключу
+	cert: fs.readFileSync("./ssl/apate.crt"), // путь к сертификату
+}
 
 app.post("/sendEmail", async (req, res) => {
 	const { to, subject, html } = req.body;
@@ -67,6 +79,6 @@ app.post('/register', async (req, res) => {
 	}
 });
 
-app.listen(3333, () => {
+https.createServer(httpsOptions, app).listen(3333, () => {
 	console.log('Application listening on port 3333!');
-});
+})
