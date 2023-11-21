@@ -8,9 +8,6 @@ import { getFirestore } from "firebase-admin/firestore";
 import fs from 'fs';
 import https from 'https';
 
-const cert = fs.readFileSync('./path/to/the/cert.crt');
-const ca = fs.readFileSync('./path/to/the/ca.crt');
-const key = fs.readFileSync('./path/to/the/private.key');
 
 const firestoreApp = initializeApp();
 const db = getFirestore();
@@ -38,8 +35,9 @@ app.use(express.json());
 app.options('*', cors())
 
 const httpsOptions = {
-	key: fs.readFileSync("./ssl/apate.key"), // путь к ключу
-	cert: fs.readFileSync("./ssl/apate.crt"), // путь к сертификату
+	cert: fs.readFileSync('./ssl/apate.crt'),
+	ca: fs.readFileSync('./ssl/apate.ca-bundle'),
+	key: fs.readFileSync('./ssl/apate.key'),
 }
 
 app.post("/sendEmail", async (req, res) => {
@@ -79,6 +77,4 @@ app.post('/register', async (req, res) => {
 	}
 });
 
-https.createServer(httpsOptions, app).listen(3333, () => {
-	console.log('Application listening on port 3333!');
-})
+https.createServer(httpsOptions, app).listen(3333, 'apatecyprusestate-server.site')
