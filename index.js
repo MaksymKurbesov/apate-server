@@ -40,15 +40,16 @@ app.options('*', cors())
 const httpsOptions = {
 	cert: fs.readFileSync('ssl/apate.crt'),
 	key: fs.readFileSync('ssl/apate.key'),
+	ca: fs.readFileSync('ssl/apate.ca-bundle'),
 }
 
 
-app.use((req, res, next) => {
-	if(req.protocol === 'http') {
-		res.redirect(301, `https://${req.headers.host}${req.url}`);
-	}
-	next();
-});
+// app.use((req, res, next) => {
+// 	if(req.protocol === 'http') {
+// 		res.redirect(301, `https://${req.headers.host}${req.url}`);
+// 	}
+// 	next();
+// });
 
 app.post("/sendEmail", async (req, res) => {
 	const { to, subject, html } = req.body;
@@ -66,6 +67,7 @@ app.post("/sendEmail", async (req, res) => {
 		res.status(500).send("Failed to send email");
 	}
 });
+
 
 app.post('/register', async (req, res) => {
 	const userData = await db.collection('users').doc('admin').get();
@@ -88,13 +90,19 @@ app.post('/register', async (req, res) => {
 	}
 });
 
+
+app.get('/', (req, res) => {
+	res.send("Hello world");
+})
+
 // app.listen(3333, () => {
 // 	console.log('listen')
 // })
-//
+
+https.createServer(httpsOptions, app).listen(8000, () => {
+	console.log('listen2')
+})
+
 http.createServer(app).listen(80, () => {
 	console.log('listen')
 });
-https.createServer(httpsOptions, app).listen(3333, () => {
-	console.log('listen2')
-})
