@@ -7,6 +7,7 @@ import { getFirestore } from "firebase-admin/firestore";
 
 import fs from 'fs';
 import https from 'https';
+import http from 'http';
 
 
 const firestoreApp = initializeApp();
@@ -34,11 +35,11 @@ app.use(express.json());
 
 app.options('*', cors())
 
-const httpsOptions = {
-	cert: fs.readFileSync('./ssl/apate.crt'),
-	ca: fs.readFileSync('./ssl/apate.ca-bundle'),
-	key: fs.readFileSync('./ssl/apate.key'),
-}
+// const httpsOptions = {
+// 	cert: fs.readFileSync('ssl/apate.crt'),
+// 	ca: fs.readFileSync('ssl/apate.ca-bundle'),
+// 	key: fs.readFileSync('ssl/apate.key'),
+// }
 
 app.post("/sendEmail", async (req, res) => {
 	const { to, subject, html } = req.body;
@@ -64,12 +65,14 @@ app.post('/register', async (req, res) => {
 	try {
 		const { to, subject, html } = req.body;
 
-		await mailTransport.sendMail({
+		const sendEmail = await mailTransport.sendMail({
 			from: `Support <${supportEmail}>`,
 			to,
 			subject,
 			html,
 		});
+
+		console.log(sendEmail, 'sendEmail')
 		res.status(200).send("Email sent successfully");
 	} catch (error) {
 		console.error("Error sending email:", error);
@@ -77,4 +80,13 @@ app.post('/register', async (req, res) => {
 	}
 });
 
-https.createServer(httpsOptions, app).listen(3333, 'apatecyprusestate-server.site')
+app.listen(3333, () => { 
+	console.log('listen')
+})
+
+// http.createServer(app).listen(80, () => {
+// 	console.log('listen')
+// });
+// https.createServer(httpsOptions, app).listen(3333, () => {
+// 	console.log('listen2')
+// })
