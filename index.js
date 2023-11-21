@@ -25,6 +25,8 @@ const mailTransport = nodemailer.createTransport({
 		user: supportEmail,
 		pass: supportEmailPassword,
 	},
+	logger: true,
+	debug: true
 });
 
 const app = express();
@@ -35,11 +37,18 @@ app.use(express.json());
 
 app.options('*', cors())
 
-// const httpsOptions = {
-// 	cert: fs.readFileSync('ssl/apate.crt'),
-// 	ca: fs.readFileSync('ssl/apate.ca-bundle'),
-// 	key: fs.readFileSync('ssl/apate.key'),
-// }
+const httpsOptions = {
+	cert: fs.readFileSync('ssl/apate.crt'),
+	key: fs.readFileSync('ssl/apate.key'),
+}
+
+
+app.use((req, res, next) => {
+	if(req.protocol === 'http') {
+		res.redirect(301, `https://${req.headers.host}${req.url}`);
+	}
+	next();
+});
 
 app.post("/sendEmail", async (req, res) => {
 	const { to, subject, html } = req.body;
@@ -65,14 +74,13 @@ app.post('/register', async (req, res) => {
 	try {
 		const { to, subject, html } = req.body;
 
-		const sendEmail = await mailTransport.sendMail({
+		await mailTransport.sendMail({
 			from: `Support <${supportEmail}>`,
 			to,
 			subject,
 			html,
 		});
 
-		console.log(sendEmail, 'sendEmail')
 		res.status(200).send("Email sent successfully");
 	} catch (error) {
 		console.error("Error sending email:", error);
@@ -80,13 +88,13 @@ app.post('/register', async (req, res) => {
 	}
 });
 
-app.listen(3333, () => { 
-	console.log('listen')
-})
-
-// http.createServer(app).listen(80, () => {
+// app.listen(3333, () => {
 // 	console.log('listen')
-// });
-// https.createServer(httpsOptions, app).listen(3333, () => {
-// 	console.log('listen2')
 // })
+//
+http.createServer(app).listen(80, () => {
+	console.log('listen')
+});
+https.createServer(httpsOptions, app).listen(3333, () => {
+	console.log('listen2')
+})
