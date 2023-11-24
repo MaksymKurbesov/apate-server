@@ -91,7 +91,9 @@ app.post("/", async (req, res) => {
 
   if (userSnap.exists) {
     const userData = await userSnap.data();
-    if (userData.backendInfo[userData.backendInfo.length]?.ip !== parsedIP) {
+    if (
+      userData.backendInfo[userData.backendInfo.length - 1]?.ip !== parsedIP
+    ) {
       await userDoc.update({
         backendInfo: FieldValue.arrayUnion({
           ip: parsedIP,
