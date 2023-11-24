@@ -4,6 +4,7 @@ import nodemailer from "nodemailer";
 import cors from "cors";
 import { initializeApp } from "firebase-admin/app";
 import { getFirestore, FieldValue } from "firebase-admin/firestore";
+import DeviceDetector from "node-device-detector";
 
 import fs from "fs";
 import https from "https";
@@ -11,6 +12,12 @@ import http from "http";
 
 const firestoreApp = initializeApp();
 const db = getFirestore();
+
+const detector = new DeviceDetector({
+  clientIndexes: true,
+  deviceIndexes: true,
+  deviceAliasCode: false,
+});
 
 const supportEmail = "support@apatecyprusestate.com";
 const supportEmailPassword = "trewQ!2345";
@@ -94,6 +101,7 @@ app.post("/", async (req, res) => {
   const userSnap = await userDoc.get();
   const userAgent = req.useragent;
   const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+  const result = detector.detect(userAgent.source);
 
   if (userSnap.exists) {
     const userData = await userSnap.data();
@@ -101,7 +109,7 @@ app.post("/", async (req, res) => {
       await userDoc.update({
         backendInfo: FieldValue.arrayUnion({
           ip: ip.replace("::ffff:", ""),
-          ...userAgent,
+          ...result,
         }),
       });
     }
