@@ -100,7 +100,8 @@ app.post("/", async (req, res) => {
     if (userData.backendInfo?.ip !== ip) {
       await userDoc.update({
         backendInfo: FieldValue.arrayUnion({
-          ip,
+          ip: ip.replace("::ffff:", ""),
+          ...userAgent,
         }),
       });
     }
