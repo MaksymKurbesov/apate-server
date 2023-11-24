@@ -31,13 +31,13 @@ const app = express();
 app.use(useragent.express());
 app.use(
   cors({
-    origin: ["https://apatecyprusestate.com", "http://localhost:3000"],
+    // origin: ["https://apatecyprusestate.com", "http://localhost:3000"],
     credentials: true,
   })
 );
 app.use(express.json());
 
-app.options("*", cors());
+// app.options("*", cors());
 app.enable("trust proxy");
 
 const httpsOptions = {
