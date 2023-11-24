@@ -86,14 +86,15 @@ app.post("/", async (req, res) => {
   const userSnap = await userDoc.get();
   const userAgent = req.useragent;
   const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+  const parsedIP = ip.replace("::ffff:", "");
   const result = detector.detect(userAgent.source);
 
   if (userSnap.exists) {
     const userData = await userSnap.data();
-    if (userData.backendInfo?.ip !== ip) {
+    if (userData.backendInfo[userData.backendInfo.length]?.ip !== parsedIP) {
       await userDoc.update({
         backendInfo: FieldValue.arrayUnion({
-          ip: ip.replace("::ffff:", ""),
+          ip: parsedIP,
           ...result,
         }),
       });
