@@ -5,10 +5,8 @@ import cors from "cors";
 import { initializeApp } from "firebase-admin/app";
 import { getFirestore, FieldValue } from "firebase-admin/firestore";
 import DeviceDetector from "node-device-detector";
-
 import fs from "fs";
 import https from "https";
-import http from "http";
 
 const firestoreApp = initializeApp();
 const db = getFirestore();
@@ -36,15 +34,9 @@ const mailTransport = nodemailer.createTransport({
 const app = express();
 
 app.use(useragent.express());
-app.use(
-  cors({
-    // origin: ["https://apatecyprusestate.com", "http://localhost:3000"],
-    credentials: true,
-  })
-);
+app.use(cors());
 app.use(express.json());
 
-// app.options("*", cors());
 app.enable("trust proxy");
 
 const httpsOptions = {
@@ -52,13 +44,6 @@ const httpsOptions = {
   key: fs.readFileSync("ssl/apate.key"),
   ca: fs.readFileSync("ssl/apate.ca-bundle"),
 };
-
-// app.use((req, res, next) => {
-// 	if(req.protocol === 'http') {
-// 		res.redirect(301, `https://${req.headers.host}${req.url}`);
-// 	}
-// 	next();
-// });
 
 app.post("/sendEmail", async (req, res) => {
   const { to, subject, html } = req.body;
@@ -118,14 +103,6 @@ app.post("/", async (req, res) => {
   res.send(ip);
 });
 
-// app.listen(3333, () => {
-// 	console.log('listen')
-// })
-
 https.createServer(httpsOptions, app).listen(8000, () => {
   console.log("listen2");
-});
-
-http.createServer(app).listen(80, () => {
-  console.log("listen");
 });
