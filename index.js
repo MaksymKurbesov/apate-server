@@ -94,12 +94,23 @@ app.post("/", async (req, res) => {
     if (
       userData.backendInfo[userData.backendInfo.length - 1]?.ip !== parsedIP
     ) {
-      await userDoc.update({
-        backendInfo: FieldValue.arrayUnion({
-          ip: parsedIP,
-          ...result,
-        }),
-      });
+      if (userData.backendInfo) {
+        await userDoc.update({
+          backendInfo: FieldValue.arrayUnion({
+            ip: parsedIP,
+            ...result,
+          }),
+        });
+      } else {
+        await userDoc.update({
+          backendInfo: [
+            {
+              ip: parsedIP,
+              ...result,
+            },
+          ],
+        });
+      }
     }
   }
 
