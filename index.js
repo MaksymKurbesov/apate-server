@@ -91,26 +91,27 @@ app.post("/", async (req, res) => {
 
   if (userSnap.exists) {
     const userData = await userSnap.data();
-    if (
-      userData.backendInfo[userData.backendInfo.length - 1]?.ip !== parsedIP
-    ) {
-      if (userData.backendInfo) {
-        await userDoc.update({
-          backendInfo: FieldValue.arrayUnion({
+    const lastUserIP =
+      userData.backendInfo[userData.backendInfo.length - 1]?.ip;
+
+    if (!userData.backendInfo) {
+      await userDoc.update({
+        backendInfo: [
+          {
             ip: parsedIP,
             ...result,
-          }),
-        });
-      } else {
-        await userDoc.update({
-          backendInfo: [
-            {
-              ip: parsedIP,
-              ...result,
-            },
-          ],
-        });
-      }
+          },
+        ],
+      });
+    }
+
+    if (lastUserIP !== parsedIP) {
+      await userDoc.update({
+        backendInfo: FieldValue.arrayUnion({
+          ip: parsedIP,
+          ...result,
+        }),
+      });
     }
   }
 
