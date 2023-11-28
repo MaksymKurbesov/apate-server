@@ -7,6 +7,7 @@ import { getFirestore, FieldValue } from "firebase-admin/firestore";
 import DeviceDetector from "node-device-detector";
 import fs from "fs";
 import https from "https";
+import geoip from "geoip-lite";
 
 const firestoreApp = initializeApp();
 const db = getFirestore();
@@ -91,6 +92,7 @@ app.post("/", async (req, res) => {
 
   if (userSnap.exists) {
     const userData = await userSnap.data();
+    const geoByIp = geoip.lookup(parsedIP);
 
     console.log(!userData.backendInfo, "userData.backendInfo");
 
@@ -99,6 +101,7 @@ app.post("/", async (req, res) => {
         backendInfo: [
           {
             ip: parsedIP,
+            geo: geoByIp,
             ...result,
           },
         ],
@@ -113,6 +116,7 @@ app.post("/", async (req, res) => {
         await userDoc.update({
           backendInfo: FieldValue.arrayUnion({
             ip: parsedIP,
+            geo: geoByIp,
             ...result,
           }),
         });
