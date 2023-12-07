@@ -233,9 +233,8 @@ app.post("/sendEmailToAll", async (req, res) => {
             </td>
         </tr>
     </table>
-</div>
-</body>
-`,
+</div> 
+</body>`,
     });
     res.status(200).send("Email sent successfully");
   } catch (error) {
