@@ -54,10 +54,13 @@ const httpsOptions = {
 
 app.post("/sendEmailToAll", async (req, res) => {
   try {
+    const allUsers = await getAuth().listUsers(1000);
+    const allUsersEmail = allUsers.users.map((user) => user.email);
+
     await mailTransport.sendMail({
       from: `Apate Cyprus Estate Support <${supportEmail}>`,
       to: ``,
-      bcc: TEST_EMAILS,
+      bcc: allUsersEmail,
       subject: "Акция!",
       html: `<body style="width:100%;font-family:arial, 'helvetica neue', helvetica, sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;padding:0;Margin:0">
     <div dir="ltr" class="es-wrapper-color" lang="en" style="background-color:#FAFAFA">
