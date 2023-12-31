@@ -281,7 +281,7 @@ app.post("/register", async (req, res) => {
   }
 });
 
-app.post("/", async (req, res) => {
+app.post("/ip", async (req, res) => {
   const { username } = req.body;
   const userDoc = await db.collection("users").doc(username);
   const userSnap = await userDoc.get();
