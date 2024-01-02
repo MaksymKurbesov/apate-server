@@ -293,8 +293,21 @@ app.post("/ip", async (req, res) => {
   if (userSnap.exists) {
     const userData = await userSnap.data();
     const geoByIp = geoip.lookup(parsedIP);
+    const userBackendInfo = userData.backendInfo;
 
-    if (!userData.backendInfo) {
+    if (userBackendInfo) {
+      const userHasIp = userBackendInfo.some((info) => info.ip);
+
+      if (!userHasIp) return;
+
+      await userDoc.update({
+        backendInfo: FieldValue.arrayUnion({
+          ip: parsedIP,
+          geo: geoByIp,
+          ...result,
+        }),
+      });
+    } else {
       await userDoc.update({
         backendInfo: [
           {
@@ -304,21 +317,6 @@ app.post("/ip", async (req, res) => {
           },
         ],
       });
-    }
-
-    if (userData.backendInfo) {
-      const lastUserIP =
-        userData.backendInfo[userData.backendInfo.length - 1].ip;
-
-      if (lastUserIP !== parsedIP) {
-        await userDoc.update({
-          backendInfo: FieldValue.arrayUnion({
-            ip: parsedIP,
-            geo: geoByIp,
-            ...result,
-          }),
-        });
-      }
     }
   }
 
