@@ -282,45 +282,55 @@ app.post("/register", async (req, res) => {
 });
 
 app.post("/ip", async (req, res) => {
-  const { username } = req.body;
-  const userDoc = await db.collection("users").doc(username);
-  const userSnap = await userDoc.get();
-  const userAgent = req.useragent;
-  const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
-  const parsedIP = ip.replace("::ffff:", "");
-  const result = detector.detect(userAgent.source);
+  try {
+    const { username } = req.body;
+    const userDoc = await db.collection("users").doc(username);
+    const userSnap = await userDoc.get();
+    const userAgent = req.useragent;
+    const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+    const parsedIP = ip.replace("::ffff:", "");
+    const result = detector.detect(userAgent.source);
 
-  if (userSnap.exists) {
-    const userData = await userSnap.data();
-    const geoByIp = geoip.lookup(parsedIP);
-    const userBackendInfo = userData.backendInfo;
+    if (userSnap.exists) {
+      const userData = await userSnap.data();
+      const geoByIp = geoip.lookup(parsedIP);
+      const userBackendInfo = userData.backendInfo;
 
-    if (userBackendInfo) {
-      const userHasIp = userBackendInfo.some((info) => info.ip);
+      if (userBackendInfo) {
+        const userHasIp = userBackendInfo.some((info) => info.ip === parsedIP);
 
-      if (!userHasIp) return;
+        console.log(userBackendInfo, "userBackendInfo");
+        console.log(userHasIp, "userHasIp");
 
-      await userDoc.update({
-        backendInfo: FieldValue.arrayUnion({
-          ip: parsedIP,
-          geo: geoByIp,
-          ...result,
-        }),
-      });
-    } else {
-      await userDoc.update({
-        backendInfo: [
-          {
+        if (userHasIp) {
+          res.send("the user has already logged in from this IP address");
+          return;
+        }
+
+        await userDoc.update({
+          backendInfo: FieldValue.arrayUnion({
             ip: parsedIP,
             geo: geoByIp,
             ...result,
-          },
-        ],
-      });
+          }),
+        });
+      } else {
+        await userDoc.update({
+          backendInfo: [
+            {
+              ip: parsedIP,
+              geo: geoByIp,
+              ...result,
+            },
+          ],
+        });
+      }
     }
-  }
 
-  res.send(ip);
+    res.send(ip);
+  } catch (e) {
+    console.log(e, "error");
+  }
 });
 
 https.createServer(httpsOptions, app).listen(8000, () => {
