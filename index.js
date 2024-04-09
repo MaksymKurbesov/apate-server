@@ -310,7 +310,8 @@ app.post("/ip", async (req, res) => {
         await userDoc.update({
           backendInfo: FieldValue.arrayUnion({
             ip: parsedIP,
-            geo: geoByIp,
+            country: geoByIp.country,
+            city: geoByIp.city,
             ...result,
           }),
         });
