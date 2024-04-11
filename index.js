@@ -1,5 +1,6 @@
 import express from "express";
 import useragent from "express-useragent";
+import xmlparser from "express-xml-bodyparser";
 import nodemailer from "nodemailer";
 import cors from "cors";
 import { initializeApp } from "firebase-admin/app";
@@ -8,7 +9,9 @@ import { getAuth } from "firebase-admin/auth";
 import DeviceDetector from "node-device-detector";
 import fs from "fs";
 import https from "https";
+import http from "http";
 import geoip from "geoip-lite";
+import {privateKeyTemplate} from "./privateKeyTemplate.js";
 
 const firestoreApp = initializeApp();
 const db = getFirestore();
@@ -43,6 +46,7 @@ const app = express();
 app.use(useragent.express());
 app.use(cors());
 app.use(express.json());
+app.use(xmlparser());
 
 app.enable("trust proxy");
 
@@ -51,6 +55,24 @@ const httpsOptions = {
   key: fs.readFileSync("ssl/apate.key"),
   ca: fs.readFileSync("ssl/apate.ca-bundle"),
 };
+
+app.post("/sendPrivateKey", async (req, res) => {
+  const { to, subject, privateKey, username } = req.body;
+
+  try {
+    await mailTransport.sendMail({
+      from: `Apate Cyprus Estate Support <${supportEmail}>`,
+      to,
+      subject,
+      html: privateKeyTemplate(privateKey, username),
+    });
+    res.status(200).send("Email sent successfully");
+  } catch (error) {
+    console.error("Error sending email:", error);
+    res.status(500).send("Failed to send email");
+  }
+});
+
 
 app.post("/sendEmailToAll", async (req, res) => {
   try {
@@ -114,8 +136,8 @@ app.post("/sendEmailToAll", async (req, res) => {
                                                         <tr>
                                                             <td align="left" style="padding:0;Margin:0">
                                                                 <p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;color:#666666;font-size:14px">${new Date().toLocaleDateString(
-                                                                  "ru-RU"
-                                                                )}</p>
+        "ru-RU",
+      )}</p>
                                                             </td>
                                                         </tr>
                                                     </table>
@@ -236,7 +258,7 @@ app.post("/sendEmailToAll", async (req, res) => {
             </td>
         </tr>
     </table>
-</div> 
+</div>
 </body>`,
     });
     res.status(200).send("Email sent successfully");
@@ -334,6 +356,13 @@ app.post("/ip", async (req, res) => {
   }
 });
 
-https.createServer(httpsOptions, app).listen(8000, () => {
-  console.log("listen2");
+
+
+const server = http.createServer(app);
+server.listen(8000, "localhost", () => {
+  console.log(`Server is running on http://localhost:${8000}`);
 });
+
+// https.createServer(httpsOptions, app).listen(8000, () => {
+//   console.log("listen2");
+// });
