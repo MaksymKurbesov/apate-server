@@ -12,6 +12,7 @@ import https from "https";
 import http from "http";
 import geoip from "geoip-lite";
 import {privateKeyTemplate} from "./privateKeyTemplate.js";
+import {congratulationEmail} from "./congratulationEmail.js";
 
 const firestoreApp = initializeApp();
 const db = getFirestore();
@@ -73,6 +74,23 @@ app.post("/sendPrivateKey", async (req, res) => {
   }
 });
 
+
+app.post("sendCongratulationEmail", async (req, res) => {
+  const { to, subject, username } = req.body;
+
+  try {
+    await mailTransport.sendMail({
+      from: `Apate Cyprus Estate Support <${supportEmail}>`,
+      to,
+      subject,
+      html: congratulationEmail(username),
+    });
+    res.status(200).send("Email sent successfully");
+  } catch (error) {
+    console.error("Error sending email:", error);
+    res.status(500).send("Failed to send email");
+  }
+})
 
 app.post("/sendEmailToAll", async (req, res) => {
   try {
