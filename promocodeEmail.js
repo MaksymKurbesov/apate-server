@@ -1,5 +1,6 @@
 export const promocodeEmail = (username) => {
   return `<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -176,12 +177,18 @@ export const promocodeEmail = (username) => {
                                                             </tr>
                                                             <tr>
                                                                 <td class="es-m-txt-l" style="padding: 5px 0 10px;">
-                                                                    <p>Коллектив <strong>Apate Cyprus Estate</strong> искренне поздравляет вас с достижением высоких результатов в номинации <strong>"Самая результативная структура"</strong>! Ваше лидерство и преданность принесли впечатляющие результаты, и ваше место в 20ке лидеров подтверждает ваши выдающиеся способности и усердие. </br></br>(Место вашей структуры в рейтинге - <strong>20</strong>).<br><br></p>
-                                                                    <p>Оборот вашей структуры является примером эффективного и стратегического подхода к работе. Ваши достижения в этой области заслуживают наших наивысших похвал и признания!<br><br></p>
-                                                                    <p style="background-color: rgba(121, 87, 255, 1); border-radius: 20px; padding: 25px; margin-bottom: 25px; color: #fff;">
-                                                                        <strong><i>Хотим также поделиться важной информацией: попадание в 10ку лидеров в нашей компании гарантирует вам участие в нашей грядущей конференции, которая станет возможностью не только для обучения и обмена опытом, но и для укрепления связей с другими участниками нашего сообщества. Независимо от количества членов вашей структуры, ваше достижение будет отмечено и признано.</i></strong>
-                                                                    </p>
-                                                                    <p>Мы убеждены, что ваше лидерство и стремление к совершенству приведут вас к новым высотам успеха. Желаем вам дальнейших побед и достижений в вашей карьере вместе с Apate Cyprus Estate!<br><br></p>
+                                                                    <p>Мы рады сообщить вам, что вы стали обладателем уникального промокода, который дает вам бонус <b>30%</b> при пополнении баланса на сумму более <b>$20,000!</b><br><br></p>
+                                                                    <p style="text-align:center;border-radius:20px;background: #7957FF;padding: 45px;color: white;font-size:24px;margin-bottom: 20px;"><b>Ваш промокод: WIN30</b></p>
+                                                                    <p>Этот промокод был отправлен вам в знак признательности за то, что ваша сумма инвестиций в <b style="color: #7957FF">Apate Cyprus Estate</b> превысила <b>$200,000</b>. Спасибо за ваше доверие и вклад в наше сотрудничество!<br><br></p>
+                                                                    <h3>Как воспользоваться промокодом:</h3>
+                                                                    <ul style="list-style-type: none;font-size: 14px;">
+                                                                        <li style="margin-bottom: 10px">1. Зайдите в свой личный кабинет на нашем сайте.</li>
+                                                                        <li style="margin-bottom: 10px">2. Перейдите к пополнению баланса.</li>
+                                                                        <li style="margin-bottom: 10px">3. Введите сумму более $20,000.</li>
+                                                                        <li style="margin-bottom: 10px">4. Введите промокод WIN30 в соответствующее поле.</li>
+                                                                        <li >5. Получите бонус 30% на сумму вашего пополнения!</li>
+                                                                    </ul>
+                                                                    <p><i>Не упустите эту возможность! Промокод действителен до <b>20.06.2024</b>, так что поспешите воспользоваться своим преимуществом.</i><br><br></p>
                                                                     <p>Если у вас возникнут вопросы или вам потребуется помощь, пожалуйста, не стесняйтесь связаться с нами.<br><br>С уважением, </br><i>Customer Support Apate Cyprus Estate</i><br><br></p>
                                                                 </td>
                                                             </tr>
@@ -225,14 +232,14 @@ export const promocodeEmail = (username) => {
                                                         <table width="100%" cellspacing="0" cellpadding="0" role="presentation">
                                                             <tr>
                                                                 <td class="es-m-txt-c" align="left">
-                                                                    <h3 style="padding-top: 15px;">Customer Support</h3>
-                                                                    <p><a href="tel:+35722761795">+357 22 761795</a></p>
-                                                                    <p><a href="mailto:support@apatecyprusestate.com">support@apatecyprusestate.com</a></p>
+                                                                    <h3 style="margin-bottom: 5px;padding-top: 15px;text-align: left;padding-left: 15px">Customer Support</h3>
+                                                                    <p style="margin-bottom: 5px;text-align: left;padding-left: 15px"><a style="color: black" href="tel:+35722761795">+357 22 761795</a></p>
+                                                                    <p style="margin-bottom: 5px;text-align: left;padding-left: 15px"><a style="color: black" href="mailto:support@apatecyprusestate.com">support@apatecyprusestate.com</a></p>
                                                                 </td>
                                                             </tr>
                                                             <tr>
                                                                 <td class="es-m-txt-c" align="left" style="padding: 5px 0; font-size:0;">
-                                                                    <table class="es-table-not-adapt es-social" cellspacing="0" cellpadding="0" role="presentation">
+                                                                    <table style="padding-left: 15px" class="es-table-not-adapt es-social" cellspacing="0" cellpadding="0" role="presentation">
                                                                         <tr>
                                                                             <td align="center" style="padding-right: 10px;">
                                                                                 <a href="https://www.instagram.com/apatecyprusestate/">

@@ -18,8 +18,6 @@ import { promocodeEmail } from "./promocodeEmail.js";
 const firestoreApp = initializeApp();
 const db = getFirestore();
 
-const TEST_EMAILS = ["probuisness90@gmail.com", "bonyklade@gmail.com"];
-
 const detector = new DeviceDetector({
   clientIndexes: true,
   deviceIndexes: true,
