@@ -270,3 +270,5 @@ export const congratulationEmail = (username) => {
 </div>
 </body>`
 }
+
+
