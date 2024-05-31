@@ -91,14 +91,14 @@ app.post("/sendPromocode", async (req, res) => {
 });
 
 app.post("sendCongratulationEmail", async (req, res) => {
-  const { to, subject, username } = req.body;
+  const { to, subject, username, nomination, position } = req.body;
 
   try {
     await mailTransport.sendMail({
       from: `Apate Cyprus Estate Support <${supportEmail}>`,
       to,
       subject,
-      html: congratulationEmail(username),
+      html: congratulationEmail(username, nomination, position),
     });
     res.status(200).send("Email sent successfully");
   } catch (error) {

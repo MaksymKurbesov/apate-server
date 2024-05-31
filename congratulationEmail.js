@@ -1,5 +1,5 @@
-export const congratulationEmail = (username) => {
-	return `<body
+export const congratulationEmail = (username, nomination, position) => {
+  return `<body
         style="width:100%;font-family:arial, 'helvetica neue', helvetica, sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;padding:0;Margin:0">
 <div dir="ltr" class="es-wrapper-color" lang="en" style="background-color:#FAFAFA">
     <!--[if gte mso 9]>
@@ -87,8 +87,8 @@ export const congratulationEmail = (username) => {
                                                                 <p
                                                                         style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;color:#666666;font-size:14px">
                                                                     ${new Date().toLocaleDateString(
-		"ru-RU"
-	)}</p>
+                                                                      "ru-RU"
+                                                                    )}</p>
                                                             </td>
                                                         </tr>
                                                     </table>
@@ -113,7 +113,7 @@ export const congratulationEmail = (username) => {
                                                                 style="padding:0;Margin:0;padding-top:5px;padding-bottom:10px">
                                                                 <h3
                                                                         style="Margin:0;line-height:24px;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;font-size:20px;font-style:normal;font-weight:bold;color:#7957FF">
-                                                                    Уважаемый ${username}!</h3>
+                                                                    Уважаемый(-ая) ${username}!</h3>
                                                             </td>
                                                         </tr>
                                                         <tr>
@@ -121,7 +121,7 @@ export const congratulationEmail = (username) => {
                                                                 style="padding:0;Margin:0;padding-top:5px;padding-bottom:10px">
                                                                 <p
                                                                         style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;color:#333333;font-size:14px">
-                                                                    Коллектив <strong>Apate Cyprus Estate</strong> искренне поздравляет вас с достижением высоких результатов в номинации <strong>"Самая результативная структура"</strong>! Ваше лидерство и преданность принесли впечатляющие результаты, и ваше место в 20ке лидеров подтверждает ваши выдающиеся способности и усердие. </br></br>(Место вашей структуры в рейтинге - <strong>20</strong>).<br><br>
+                                                                    Коллектив <strong>Apate Cyprus Estate</strong> искренне поздравляет вас с достижением высоких результатов в номинации <strong>${nomination}</strong>! Ваше лидерство и преданность принесли впечатляющие результаты, и ваше место в 20ке лидеров подтверждает ваши выдающиеся способности и усердие. </br></br>(Место вашей структуры в рейтинге - <strong>${position}</strong>).<br><br>
                                                                 </p>
                                                                 <p
                                                                         style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;color:#333333;font-size:14px">
@@ -268,7 +268,5 @@ export const congratulationEmail = (username) => {
         </tr>
     </table>
 </div>
-</body>`
-}
-
-
+</body>`;
+};
