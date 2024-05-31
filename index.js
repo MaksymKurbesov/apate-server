@@ -90,7 +90,7 @@ app.post("/sendPromocode", async (req, res) => {
   }
 });
 
-app.post("sendCongratulationEmail", async (req, res) => {
+app.post("/sendCongratulationEmail", async (req, res) => {
   const { to, subject, username, nomination, position } = req.body;
 
   try {
