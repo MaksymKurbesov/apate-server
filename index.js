@@ -14,6 +14,7 @@ import geoip from "geoip-lite";
 import { privateKeyTemplate } from "./privateKeyTemplate.js";
 import { congratulationEmail } from "./congratulationEmail.js";
 import { promocodeEmail } from "./promocodeEmail.js";
+import { sendPromocode25 } from "./promocode25.js";
 
 const firestoreApp = initializeApp();
 const db = getFirestore();
@@ -82,6 +83,25 @@ app.post("/sendPromocode", async (req, res) => {
       to,
       subject,
       html: promocodeEmail(username),
+    });
+    res.status(200).send("Email sent successfully");
+  } catch (error) {
+    console.error("Error sending email:", error);
+    res.status(500).send("Failed to send email");
+  }
+});
+
+app.post("/");
+
+app.post("/send25promocode", async (req, res) => {
+  const { to, subject, username } = req.body;
+
+  try {
+    await mailTransport.sendMail({
+      from: `Apate Cyprus Estate Support <${supportEmail}>`,
+      to,
+      subject,
+      html: sendPromocode25(username),
     });
     res.status(200).send("Email sent successfully");
   } catch (error) {
@@ -169,7 +189,7 @@ app.post("/sendEmailToAll", async (req, res) => {
                                                         <tr>
                                                             <td align="left" style="padding:0;Margin:0">
                                                                 <p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;color:#666666;font-size:14px">${new Date().toLocaleDateString(
-                                                                  "ru-RU"
+                                                                  "ru-RU",
                                                                 )}</p>
                                                             </td>
                                                         </tr>
