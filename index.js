@@ -15,6 +15,7 @@ import { privateKeyTemplate } from "./privateKeyTemplate.js";
 import { congratulationEmail } from "./congratulationEmail.js";
 import { promocodeEmail } from "./promocodeEmail.js";
 import { sendPromocode25 } from "./promocode25.js";
+import Queue from "bull";
 
 const firestoreApp = initializeApp();
 const db = getFirestore();
@@ -27,6 +28,22 @@ const detector = new DeviceDetector({
 
 const supportEmail = "support@apatecyprusestate.com";
 const supportEmailPassword = "trewQ!2345";
+
+const emailQueue = new Queue("emailQueue", {
+  limiter: {
+    max: 150, // Максимальное количество задач
+    duration: 3600000, // Продолжительность в миллисекундах (1 час = 3600000 мс)
+  },
+});
+
+async function sendEmail({ from, to, bcc, subject, html }) {
+  try {
+    await mailTransport.sendMail({ from, to, bcc, subject, html });
+    console.log("Email sent successfully");
+  } catch (error) {
+    console.error("Error sending email:", error);
+  }
+}
 
 const mailTransport = nodemailer.createTransport({
   host: "mail.apatecyprusestate.com",
@@ -130,16 +147,43 @@ app.post("/sendCongratulationEmail", async (req, res) => {
 app.post("/send25promocodeToAll", async (req, res) => {
   try {
     const allUsers = await getAuth().listUsers(1000);
-    const allUsersEmail = allUsers.users.map((user) => user.email);
+    const allUsersEmail = allUsers.users
+      .map((user) => user.email)
+      .splice(0, 150);
 
-    await mailTransport.sendMail({
-      from: `Apate Cyprus Estate Support <${supportEmail}>`,
-      to: ``,
-      bcc: allUsersEmail,
-      subject: "Акция!",
-      html: sendPromocode25("партнёр"),
+    emailQueue.process(async (job, done) => {
+      await sendEmail(job.data);
+      done();
     });
-    res.status(200).send(`Email sent successfully`);
+
+    allUsersEmail.forEach((email) => {
+      emailQueue.add({
+        from: `Apate Cyprus Estate Support <${supportEmail}>`,
+        to: "",
+        bcc: email,
+        subject: "Акция!",
+        html: sendPromocode25("партнёр"),
+      });
+    });
+
+    emailQueue.on("completed", (job) => {
+      console.log(`Job with id ${job.id} has been completed`);
+    });
+
+    emailQueue.on("failed", (job, err) => {
+      console.error(
+        `Job with id ${job.id} has failed with error ${err.message}`,
+      );
+    });
+
+    // await mailTransport.sendMail({
+    //   from: `Apate Cyprus Estate Support <${supportEmail}>`,
+    //   to: ``,
+    //   bcc: allUsersEmail.splice(0, 150),
+    //   subject: "Акция!",
+    //   html: sendPromocode25("партнёр"),
+    // });
+    res.status(200).send(`Email sent successfully, ${allUsersEmail}`);
   } catch (error) {
     console.error("Error sending email:", error);
     res.status(500).send("Failed to send email");
