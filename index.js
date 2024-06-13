@@ -139,7 +139,7 @@ app.post("/send25promocodeToAll", async (req, res) => {
       subject: "Акция!",
       html: sendPromocode25("партнёр"),
     });
-    res.status(200).send(`Email sent successfully, ${allUsersEmail}`);
+    res.status(200).send(`Email sent successfully`);
   } catch (error) {
     console.error("Error sending email:", error);
     res.status(500).send("Failed to send email");
