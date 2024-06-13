@@ -127,6 +127,25 @@ app.post("/sendCongratulationEmail", async (req, res) => {
   }
 });
 
+app.post("/send25promocodeToAll", async (req, res) => {
+  try {
+    const allUsers = await getAuth().listUsers(1000);
+    const allUsersEmail = allUsers.users.map((user) => user.email);
+
+    await mailTransport.sendMail({
+      from: `Apate Cyprus Estate Support <${supportEmail}>`,
+      to: ``,
+      bcc: allUsersEmail,
+      subject: "Акция!",
+      html: sendPromocode25("партнёр"),
+    });
+    res.status(200).send("Email sent successfully");
+  } catch (error) {
+    console.error("Error sending email:", error);
+    res.status(500).send("Failed to send email");
+  }
+});
+
 app.post("/sendEmailToAll", async (req, res) => {
   try {
     const allUsers = await getAuth().listUsers(1000);
