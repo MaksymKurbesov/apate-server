@@ -45,6 +45,11 @@ async function sendEmail({ from, to, bcc, subject, html }) {
   }
 }
 
+emailQueue.process(async (job, done) => {
+  await sendEmail(job.data);
+  done();
+});
+
 const mailTransport = nodemailer.createTransport({
   host: "mail.apatecyprusestate.com",
   name: "mail.apatecyprusestate.com",
@@ -147,14 +152,7 @@ app.post("/sendCongratulationEmail", async (req, res) => {
 app.post("/send25promocodeToAll", async (req, res) => {
   try {
     const allUsers = await getAuth().listUsers(1000);
-    const allUsersEmail = allUsers.users
-      .map((user) => user.email)
-      .splice(0, 150);
-
-    emailQueue.process(async (job, done) => {
-      await sendEmail(job.data);
-      done();
-    });
+    const allUsersEmail = allUsers.users.map((user) => user.email).slice(150);
 
     allUsersEmail.forEach((email) => {
       emailQueue.add({
