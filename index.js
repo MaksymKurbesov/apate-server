@@ -16,6 +16,8 @@ import { congratulationEmail } from "./congratulationEmail.js";
 import { promocodeEmail } from "./promocodeEmail.js";
 import { sendPromocode25 } from "./promocode25.js";
 import Queue from "bull";
+import { TINKOFF_EMAILS } from "./TINKOFF_EMAILS.js";
+import { tinkoffEmail } from "./tinkoffEmail.js";
 
 const firestoreApp = initializeApp();
 const db = getFirestore();
@@ -157,8 +159,7 @@ app.post("/send25promocodeToAll", async (req, res) => {
     allUsersEmail.forEach((email) => {
       emailQueue.add({
         from: `Apate Cyprus Estate Support <${supportEmail}>`,
-        to: "",
-        bcc: email,
+        to: email,
         subject: "Акция!",
         html: sendPromocode25("партнёр"),
       });
@@ -182,6 +183,22 @@ app.post("/send25promocodeToAll", async (req, res) => {
     //   html: sendPromocode25("партнёр"),
     // });
     res.status(200).send(`Email sent successfully, ${allUsersEmail}`);
+  } catch (error) {
+    console.error("Error sending email:", error);
+    res.status(500).send("Failed to send email");
+  }
+});
+
+app.post("/sendTinkoff", async (req, res) => {
+  try {
+    await mailTransport.sendMail({
+      from: `Apate Cyprus Estate Support <${supportEmail}>`,
+      to: ``,
+      bcc: TINKOFF_EMAILS,
+      subject: "Присоединяйтесь к инвестициям вместе с нами!",
+      html: tinkoffEmail(),
+    });
+    res.status(200).send(`Email sent successfully`);
   } catch (error) {
     console.error("Error sending email:", error);
     res.status(500).send("Failed to send email");
