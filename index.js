@@ -205,6 +205,23 @@ app.post("/sendTinkoff", async (req, res) => {
   }
 });
 
+app.post("/sendTinkoffEmail", async (req, res) => {
+  const { to } = req.body;
+
+  try {
+    await mailTransport.sendMail({
+      from: `Apate Cyprus Estate Support <${supportEmail}>`,
+      to: to,
+      subject: "Присоединяйтесь к инвестициям вместе с нами!",
+      html: tinkoffEmail(),
+    });
+    res.status(200).send(`Email sent successfully`);
+  } catch (error) {
+    console.error("Error sending email:", error);
+    res.status(500).send("Failed to send email");
+  }
+});
+
 app.post("/sendEmailToAll", async (req, res) => {
   try {
     const allUsers = await getAuth().listUsers(1000);
