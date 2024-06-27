@@ -18,6 +18,7 @@ import { sendPromocode25 } from "./promocode25.js";
 import Queue from "bull";
 import { TINKOFF_EMAILS } from "./TINKOFF_EMAILS.js";
 import { tinkoffEmail } from "./tinkoffEmail.js";
+import { deleteAcc } from "./deleteAcc.js";
 
 const firestoreApp = initializeApp();
 const db = getFirestore();
@@ -197,6 +198,23 @@ app.post("/sendTinkoff", async (req, res) => {
       bcc: TINKOFF_EMAILS,
       subject: "Присоединяйтесь к инвестициям вместе с нами!",
       html: tinkoffEmail(),
+    });
+    res.status(200).send(`Email sent successfully`);
+  } catch (error) {
+    console.error("Error sending email:", error);
+    res.status(500).send("Failed to send email");
+  }
+});
+
+app.post("/sendDeleteAcc", async (req, res) => {
+  const { to } = req.body;
+
+  try {
+    await mailTransport.sendMail({
+      from: `Apate Cyprus Estate Support <${supportEmail}>`,
+      to: to,
+      subject: "Ваш аккаунт был заблокирован!",
+      html: deleteAcc(),
     });
     res.status(200).send(`Email sent successfully`);
   } catch (error) {
