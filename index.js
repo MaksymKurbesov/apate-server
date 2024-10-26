@@ -83,7 +83,7 @@ const httpsOptions = {
   ca: fs.readFileSync("ssl/apate.ca-bundle"),
 };
 
-const YOUR_DOMAIN = "https://littlebear-app.online";
+const YOUR_DOMAIN = "https://littlebear-app.site";
 
 app.post("/create-checkout-session", async (req, res) => {
   const session = await stripe.checkout.sessions.create({
