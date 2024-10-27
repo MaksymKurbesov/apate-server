@@ -30,50 +30,14 @@ const detector = new DeviceDetector({
   deviceAliasCode: false,
 });
 
-const supportEmail = "support@apatecyprusestate.com";
-const supportEmailPassword = "trewQ!2345";
-
-const emailQueue = new Queue("emailQueue", {
-  limiter: {
-    max: 150, // Максимальное количество задач
-    duration: 3600000, // Продолжительность в миллисекундах (1 час = 3600000 мс)
-  },
-});
-
-async function sendEmail({ from, to, bcc, subject, html }) {
-  try {
-    await mailTransport.sendMail({ from, to, bcc, subject, html });
-    console.log("Email sent successfully");
-  } catch (error) {
-    console.error("Error sending email:", error);
-  }
-}
-
-emailQueue.process(async (job, done) => {
-  await sendEmail(job.data);
-  done();
-});
-
-const mailTransport = nodemailer.createTransport({
-  host: "mail.apatecyprusestate.com",
-  name: "mail.apatecyprusestate.com",
-  secure: true,
-  port: 465,
-  auth: {
-    user: supportEmail,
-    pass: supportEmailPassword,
-  },
-  tls: {
-    rejectUnauthorized: false,
-  },
-});
-
 const app = express();
 
 app.use(useragent.express());
 app.use(cors());
 app.use(express.json());
 app.use(xmlparser());
+
+app.use(express.urlencoded({ extended: true }));
 
 app.enable("trust proxy");
 
@@ -83,9 +47,16 @@ const httpsOptions = {
   ca: fs.readFileSync("ssl/apate.ca-bundle"),
 };
 
+// const YOUR_DOMAIN = "http://192.168.0.224:5173";
 const YOUR_DOMAIN = "https://littlebear-app.site";
 
+app.post("/");
+
 app.post("/create-checkout-session", async (req, res) => {
+  const { userID } = req.body;
+  console.log(req.body, "req");
+  console.log(userID, "userID");
+
   const session = await stripe.checkout.sessions.create({
     line_items: [
       {
@@ -94,6 +65,9 @@ app.post("/create-checkout-session", async (req, res) => {
         quantity: 1,
       },
     ],
+    metadata: {
+      userID,
+    },
     mode: "payment",
     success_url: `${YOUR_DOMAIN}/fortune-wheel?success=true`,
     cancel_url: `${YOUR_DOMAIN}/fortune-wheel?canceled=true`,
@@ -103,59 +77,41 @@ app.post("/create-checkout-session", async (req, res) => {
   res.redirect(303, session.url);
 });
 
-app.post("/sendPrivateKey", async (req, res) => {
-  const { to, subject, privateKey, username } = req.body;
+app.post(
+  "/webhook",
+  express.json({ type: "application/json" }),
+  async (request, response) => {
+    const event = request.body;
 
-  try {
-    await mailTransport.sendMail({
-      from: `Apate Cyprus Estate Support <${supportEmail}>`,
-      to,
-      subject,
-      html: privateKeyTemplate(privateKey, username),
-    });
-    res.status(200).send("Email sent successfully");
-  } catch (error) {
-    console.error("Error sending email:", error);
-    res.status(500).send("Failed to send email");
-  }
-});
+    // Handle the event
+    switch (event.type) {
+      case "payment_intent.succeeded":
+        const paymentIntent = event.data.object;
+        break;
+      case "checkout.session.completed":
+        const userID = event.data.object.metadata.userID;
+        const docRef = db.collection("users").doc(String(userID));
 
-app.post("/");
+        await docRef.update({
+          spins: FieldValue.increment(1),
+        });
 
-app.post("/sendDeleteAcc", async (req, res) => {
-  const { to } = req.body;
+        break;
+      case "payment_method.attached":
+        const paymentMethod = event.data.object;
+        // console.log(paymentMethod, "paymentMethod");
+        // Then define and call a method to handle the successful attachment of a PaymentMethod.
+        // handlePaymentMethodAttached(paymentMethod);
+        break;
+      // ... handle other event types
+      default:
+        console.log(`Unhandled event type ${event.type}`);
+    }
 
-  try {
-    await mailTransport.sendMail({
-      from: `Apate Cyprus Estate Support <${supportEmail}>`,
-      to: to,
-      subject: "Ваш аккаунт был заблокирован!",
-      html: deleteAcc(),
-    });
-    res.status(200).send(`Email sent successfully`);
-  } catch (error) {
-    console.error("Error sending email:", error);
-    res.status(500).send("Failed to send email");
-  }
-});
-
-app.post("/register", async (req, res) => {
-  try {
-    const { to, subject, html } = req.body;
-
-    await mailTransport.sendMail({
-      from: `Apate Cyprus Estate Support <${supportEmail}>`,
-      to,
-      subject,
-      html,
-    });
-
-    res.status(200).send("Email sent successfully");
-  } catch (error) {
-    console.error("Error sending email:", error);
-    res.status(500).send("Failed to send email");
-  }
-});
+    // Return a response to acknowledge receipt of the event
+    response.json({ received: true });
+  },
+);
 
 app.post("/ip", async (req, res) => {
   try {
