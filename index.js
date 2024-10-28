@@ -67,6 +67,7 @@ app.post("/create-checkout-session", async (req, res) => {
     ],
     metadata: {
       userID,
+      quantity,
     },
     mode: "payment",
     success_url: `${YOUR_DOMAIN}/fortune-wheel?success=true`,
@@ -90,10 +91,11 @@ app.post(
         break;
       case "checkout.session.completed":
         const userID = event.data.object.metadata.userID;
+        const quantity = event.data.object.metadata.quantity;
         const docRef = db.collection("users").doc(String(userID));
 
         await docRef.update({
-          spins: FieldValue.increment(1),
+          spins: FieldValue.increment(quantity),
         });
 
         break;
