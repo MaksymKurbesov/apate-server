@@ -95,7 +95,7 @@ app.post(
         const docRef = db.collection("users").doc(String(userID));
 
         await docRef.update({
-          spins: FieldValue.increment(quantity),
+          spins: FieldValue.increment(Number(quantity)),
         });
 
         break;
