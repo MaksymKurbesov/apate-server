@@ -47,8 +47,8 @@ const httpsOptions = {
   ca: fs.readFileSync("ssl/apate.ca-bundle"),
 };
 
-const YOUR_DOMAIN = "http://192.168.0.224:5173";
-// const YOUR_DOMAIN = "https://littlebear-app.site";
+// const YOUR_DOMAIN = "http://192.168.0.224:5173";
+const YOUR_DOMAIN = "https://littlebear-app.site";
 
 app.post("/");
 
