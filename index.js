@@ -53,7 +53,7 @@ const YOUR_DOMAIN = "https://littlebear-app.site";
 app.post("/");
 
 app.post("/create-checkout-session", async (req, res) => {
-  const { userID } = req.body;
+  const { userID, quantity } = req.body;
   console.log(req.body, "req");
   console.log(userID, "userID");
 
@@ -62,7 +62,7 @@ app.post("/create-checkout-session", async (req, res) => {
       {
         // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
         price: "price_1QDteZP1NPhNMqcm0wix9bI6",
-        quantity: 3,
+        quantity,
       },
     ],
     metadata: {
