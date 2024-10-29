@@ -52,10 +52,8 @@ const YOUR_DOMAIN = "http://192.168.0.224:5173";
 
 app.post("/");
 
-app.post("/buy-spin", async (req, res) => {
+app.post("/buy_spins", async (req, res) => {
   const { userID, quantity } = req.body;
-  console.log(req.body, "req");
-  console.log(userID, "userID");
 
   const session = await stripe.checkout.sessions.create({
     line_items: [
@@ -80,8 +78,6 @@ app.post("/buy-spin", async (req, res) => {
 
 app.post("/buy_mafia_bear", async (req, res) => {
   const { userID, quantity } = req.body;
-  console.log(req.body, "req");
-  console.log(userID, "userID");
 
   const session = await stripe.checkout.sessions.create({
     line_items: [
