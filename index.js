@@ -52,7 +52,7 @@ const YOUR_DOMAIN = "http://192.168.0.224:5173";
 
 app.post("/");
 
-app.post("/buy-spins", async (req, res) => {
+app.post("/buy-spin", async (req, res) => {
   const { userID, quantity } = req.body;
   console.log(req.body, "req");
   console.log(userID, "userID");
