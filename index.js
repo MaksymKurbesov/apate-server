@@ -52,7 +52,7 @@ const YOUR_DOMAIN = "http://192.168.0.224:5173";
 
 app.post("/");
 
-app.post("/create-checkout-session", async (req, res) => {
+app.post("/buy-spin", async (req, res) => {
   const { userID, quantity } = req.body;
   console.log(req.body, "req");
   console.log(userID, "userID");
@@ -61,7 +61,33 @@ app.post("/create-checkout-session", async (req, res) => {
     line_items: [
       {
         // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
-        price: "price_1QDteZP1NPhNMqcm0wix9bI6",
+        price: "price_1QFNmHP1NPhNMqcmmuqLbAFz",
+        quantity,
+      },
+    ],
+    metadata: {
+      userID,
+      quantity,
+    },
+    mode: "payment",
+    success_url: `${YOUR_DOMAIN}/fortune-wheel?success=true`,
+    cancel_url: `${YOUR_DOMAIN}/fortune-wheel?canceled=true`,
+    automatic_tax: { enabled: true },
+  });
+
+  res.redirect(303, session.url);
+});
+
+app.post("/buy_mafia_bear", async (req, res) => {
+  const { userID, quantity } = req.body;
+  console.log(req.body, "req");
+  console.log(userID, "userID");
+
+  const session = await stripe.checkout.sessions.create({
+    line_items: [
+      {
+        // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
+        price: "price_1QFNnGP1NPhNMqcmQsU4GIbT",
         quantity,
       },
     ],
