@@ -41,6 +41,9 @@ app.use(express.urlencoded({ extended: true }));
 
 app.enable("trust proxy");
 
+const SPIN_PRODUCT = "spin";
+const MAFIA_BEAR_PRODUCT = "mafia_bear";
+
 const httpsOptions = {
   cert: fs.readFileSync("ssl/apate.crt"),
   key: fs.readFileSync("ssl/apate.key"),
@@ -66,6 +69,7 @@ app.post("/buy_spins", async (req, res) => {
     metadata: {
       userID,
       quantity,
+      product: SPIN_PRODUCT,
     },
     mode: "payment",
     success_url: `${YOUR_DOMAIN}/fortune-wheel?success=true`,
@@ -90,6 +94,7 @@ app.post("/buy_mafia_bear", async (req, res) => {
     metadata: {
       userID,
       quantity,
+      product: MAFIA_BEAR_PRODUCT,
     },
     mode: "payment",
     success_url: `${YOUR_DOMAIN}/fortune-wheel?success=true`,
@@ -114,12 +119,21 @@ app.post(
       case "checkout.session.completed":
         const userID = event.data.object.metadata.userID;
         const quantity = event.data.object.metadata.quantity;
+        const product = event.data.object.metadata.product;
         console.log(event.data, "event.data");
         const docRef = db.collection("users").doc(String(userID));
 
-        await docRef.update({
-          spins: FieldValue.increment(Number(quantity)),
-        });
+        if (product === SPIN_PRODUCT) {
+          await docRef.update({
+            spins: FieldValue.increment(Number(quantity)),
+          });
+        }
+
+        if (product === MAFIA_BEAR_PRODUCT) {
+          await docRef.update({
+            skins: FieldValue.arrayUnion("mickey"),
+          });
+        }
 
         break;
       case "payment_method.attached":
