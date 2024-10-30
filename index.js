@@ -97,8 +97,8 @@ app.post("/buy_mafia_bear", async (req, res) => {
       product: MAFIA_BEAR_PRODUCT,
     },
     mode: "payment",
-    success_url: `${YOUR_DOMAIN}/fortune-wheel?success=true`,
-    cancel_url: `${YOUR_DOMAIN}/fortune-wheel?canceled=true`,
+    success_url: `${YOUR_DOMAIN}/skins?success=true`,
+    cancel_url: `${YOUR_DOMAIN}/skins?canceled=true`,
     automatic_tax: { enabled: true },
   });
 
