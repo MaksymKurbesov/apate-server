@@ -47,8 +47,8 @@ const httpsOptions = {
   ca: fs.readFileSync("ssl/apate.ca-bundle"),
 };
 
-const YOUR_DOMAIN = "http://192.168.0.224:5173";
-// const YOUR_DOMAIN = "https://littlebear-app.site";
+// const YOUR_DOMAIN = "http://192.168.0.224:5173";
+const YOUR_DOMAIN = "https://littlebear-app.site";
 
 app.post("/");
 
@@ -114,6 +114,7 @@ app.post(
       case "checkout.session.completed":
         const userID = event.data.object.metadata.userID;
         const quantity = event.data.object.metadata.quantity;
+        console.log(event.data, "event.data");
         const docRef = db.collection("users").doc(String(userID));
 
         await docRef.update({
